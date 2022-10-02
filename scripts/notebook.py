@@ -14,18 +14,23 @@ random_state=42
 
 #%%
 
+year_n=2021
+year_0=2015
+window_n=3
+
 # df_w=pd.read_csv('multi_test_full.csv')
-df_eoy=pd.read_csv('../data/eoy_wr_half.csv')
+df_all=pd.read_csv('data/eoy_wr_half.csv')
 # adv_df=pd.read_csv('adv29test.csv')
 # adv_df.loc[adv_df['% TM']=='%']='0'
 
-df_w=pd.read_csv('../data/wr_3_2015_2021_half.csv')
+# df_w=pd.read_csv('../data/wr_3_2015_2021_half.csv')
+df_w=df_all.loc[(year_0 <= df_all['Year']) & (df_all['Year'] <= year_n) & (df_all['Week'] <= window_n)]
 df_w['% TM']=[float(x.strip(' %')) for x in df_w['% TM']]
 
 
-m1=(df_eoy['Year']>=2021) & (df_eoy['Week']==18)
-m2=(df_eoy['Year']<2021) & (df_eoy['Week']==17)
-df_eoy=df_eoy.loc[(m1) | (m2)]
+m1=(df_all['Year']>=2021) & (df_all['Week']==18)
+m2=(df_all['Year']<2021) & (df_all['Week']==17)
+df_eoy=df_all.loc[(m1) | (m2)]
 #%%
 
 ##determine class status of every player/year combo
@@ -76,8 +81,8 @@ def eval_class(df_w, df_eoy, eoy_thresh, pos_thresh, g_thresh, d_thresh):
 
 eoy_t=120
 pos_t=15
-g_t=10
-diff_t=0
+g_t=8
+diff_t=-3
 
 
 target_class, df_compare =eval_class(df_w, df_eoy
@@ -222,6 +227,8 @@ y_test=pd.DataFrame(y_test)
 y_test['pred']=y_pred
 
 #%%
+
+X_train, X_test, y_train, y_test=train_test_split(X, y, test_size=0.2, random_state=random_state)
 
 from sklearn.ensemble import RandomForestClassifier
 
